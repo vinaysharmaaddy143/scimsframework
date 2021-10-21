@@ -367,17 +367,44 @@ code {
   </script>
 <h1 id="scims-framework">SCIMS Framework</h1>
 <h2 id="index">Index</h2>
-<ol>
+<ul>
+<li><a href="#scims-framework">SCIMS Framework</a>
+<ul>
+<li><a href="#index">Index</a></li>
 <li><a href="#purpose">Purpose</a></li>
 <li><a href="#classes">Classes</a>
 <ul>
-<li><a href="#httphandler">HttpHandler</a></li>
-<li><a href="#tcphandler">TcpHandler</a></li>
-<li><a href="#websockethandler">WebSocketHandler</a></li>
+<li><a href="#httphandler">HttpHandler</a>
+<ul>
+<li><a href="#methods">Methods</a></li>
 </ul>
 </li>
-<li><a href="#performance-testing">Load Testing</a></li>
-</ol>
+<li><a href="#tcphandler">TcpHandler:</a>
+<ul>
+<li><a href="#methods-1">Methods</a></li>
+<li><a href="#example">Example:</a></li>
+</ul>
+</li>
+<li><a href="#websockethandler">WebSocketHandler:</a>
+<ul>
+<li><a href="#example-1">Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#used">Used</a></li>
+<li><a href="#performance-testing">Performance Testing</a>
+<ul>
+<li><a href="#load-on-http-request">Load on HTTP Request</a></li>
+<li><a href="#load-on-tcp-request">Load on TCP request</a></li>
+<li><a href="#load-on-websocket">Load on WebSocket</a></li>
+</ul>
+</li>
+<li><a href="#how-to-run">How to Run</a></li>
+<li><a href="#future-scope">Future scope</a></li>
+</ul>
 <h2 id="purpose">Purpose</h2>
 <p>This framework is use to test the SCMIS microservice. This framework handle the HTTP, TCP, WebSocket etc. communication.</p>
 <h2 id="classes">Classes</h2>
@@ -668,6 +695,26 @@ on the provided url. User need to pass the How much requests need to be send.</l
 <li><em>timeout</em>: Time out for one request.
 This method return <strong>True</strong> if all the request are fine otherwise <strong>False</strong></li>
 </ul>
+<h1 id="how-to-run">How to Run</h1>
+<p>Before running the framework user need to install the require modules of the Python. user can use the below steps to install the package:</p>
+<ol>
+<li>
+<p>Activate Virtual environment by using below command:</p>
+<pre class="hljs"><code><div>$ <span class="hljs-built_in">source</span> scims_framework/bin/activate
+</div></code></pre>
+</li>
+<li>
+<p>Install required package:</p>
+<pre class="hljs"><code><div>$ pip install -r requirement.txt
+</div></code></pre>
+<p><code>requirement.txt</code> file user can find form the source folder.</p>
+</li>
+</ol>
+<p>We have written all the test case using Pytest. User can create their test cases and then run using Pytest commands. We have written all the test cases inside the <code>scimsframework/TestCases</code>.</p>
+<p>To execute that test cases user need to execute below command. For more info related to pytest please check form <a href="https://docs.pytest.org/en/6.2.x/">here</a>.</p>
+<pre class="hljs"><code><div>$ pytest --html=test_result.html TestCases/
+</div></code></pre>
+<p>This command will create one HTML report for the user with name <code>test_result.html</code>. User can see the result and debug the test cases scripts using this report. Also please find <code>ScimsFramework_&lt;datetimestamp&gt;.log</code> find for getting logs of framework.</p>
 <h1 id="future-scope">Future scope</h1>
 <p>In future we are planing to add the methods which is used to capture feature flag of the microservice. Base on the more request we can add more methods inside the framework.</p>
 

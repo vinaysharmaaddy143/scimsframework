@@ -1,13 +1,24 @@
 # SCIMS Framework
 
 ## Index
-1. [Purpose](#purpose)
-2. [Classes](#classes)
+- [SCIMS Framework](#scims-framework)
+  - [Index](#index)
+  - [Purpose](#purpose)
+  - [Classes](#classes)
     - [HttpHandler](#httphandler)
-    - [TcpHandler](#tcphandler)
-    - [WebSocketHandler](#websockethandler)
-3. [Load Testing](#performance-testing)
-
+      - [Methods](#methods)
+    - [TcpHandler:](#tcphandler)
+      - [Methods](#methods-1)
+      - [Example:](#example)
+    - [WebSocketHandler:](#websockethandler)
+      - [Example](#example-1)
+- [Used](#used)
+- [Performance Testing](#performance-testing)
+    - [Load on HTTP Request](#load-on-http-request)
+    - [Load on TCP request](#load-on-tcp-request)
+    - [Load on WebSocket](#load-on-websocket)
+- [How to Run](#how-to-run)
+- [Future scope](#future-scope)
 ## Purpose
 This framework is use to test the SCMIS microservice. This framework handle the HTTP, TCP, WebSocket etc. communication. 
 
@@ -292,5 +303,34 @@ This method is used to perform the load on the WebSocket. It will send number of
 This method return **True** if all the request are fine otherwise **False**
 
 
+# How to Run
+
+Before running the framework user need to install the require modules of the Python. user can use the below steps to install the package:
+
+1. Activate Virtual environment by using below command:
+   
+   ```sh
+   $ source scims_framework/bin/activate
+   ```
+2. Install required package:
+
+    ```sh
+    $ pip install -r requirement.txt
+    ```
+
+    `requirement.txt` file user can find form the source folder.
+
+We have written all the test case using Pytest. User can create their test cases and then run using Pytest commands. We have written all the test cases inside the `scimsframework/TestCases`. 
+
+To execute that test cases user need to execute below command. For more info related to pytest please check form [here](https://docs.pytest.org/en/6.2.x/).
+
+```sh
+$ pytest --html=test_result.html TestCases/
+```
+
+This command will create one HTML report for the user with name `test_result.html`. User can see the result and debug the test cases scripts using this report. Also please find `ScimsFramework_<datetimestamp>.log` find for getting logs of framework.
+
+
 # Future scope
 In future we are planing to add the methods which is used to capture feature flag of the microservice. Base on the more request we can add more methods inside the framework.
+
