@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>README.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="scims-framework">SCIMS Framework</h1>
+<h2 id="index">Index</h2>
+<ol>
+<li><a href="#purpose">Purpose</a></li>
+<li><a href="#classes">Classes</a>
+<ul>
+<li><a href="#httphandler">HttpHandler</a></li>
+<li><a href="#tcphandler">TcpHandler</a></li>
+<li><a href="#websockethandler">WebSocketHandler</a></li>
+</ul>
+</li>
+<li><a href="#performance-testing">Load Testing</a></li>
+</ol>
+<h2 id="purpose">Purpose</h2>
+<p>This framework is use to test the SCMIS microservice. This framework handle the HTTP, TCP, WebSocket etc. communication.</p>
+<h2 id="classes">Classes</h2>
+<h3 id="httphandler">HttpHandler</h3>
+<p>This class is used to handle the Http related request. User can provide the base URL and port to this class and handle send GET , POST and DELETE request. In future you can able to handle more HTTP methods using this class base on the use cases and request.</p>
+<h4 id="methods">Methods</h4>
+<ol>
+<li><strong>send_get_request(self, base_url: str, paths: str, port: int, params: Dict, header: dict = None, timeout: float = 5.0) -&gt; Response</strong>: This method is used to send the GET request to HTTP connection. User need to provide the required parameters.</li>
+</ol>
+<ul>
+<li><strong>base_url</strong>: User need to provide the base URL to this method for sending the HTTP request. Like <em>localhost</em>, <em>127.0.0.1</em> etc.</li>
+<li><strong>paths</strong>: String, path in url. like: &quot;/number&quot;. &quot;/number/double/&quot;</li>
+<li><strong>port</strong>: Int, Port number for communication</li>
+<li><strong>params</strong>: Dictionary, parameters need to be pass</li>
+<li><strong>header</strong>: Dictionary, Headers which need to add inside request.</li>
+<li><strong>timeout</strong>: Timeout in second's for request, Its an optional argument. Default value is 5.0 seconds.</li>
+</ul>
+<p>This This method handle two exception</p>
+<ol>
+<li>requests.exceptions.Timeout -&gt; For request time out</li>
+<li>Exception -&gt; Generic Exception</li>
+</ol>
+<p>This method return <code>Response</code> Object. User can call various method of this object to get the meaning full information from the response.
+<strong>Example</strong>:</p>
+<pre><code>```python
+from Framework.HttpHandler import HttpHandler
+
+http_handler = HttpHandler()
+params = {
+    &quot;number&quot;: 2.2
+}
+response = http_handler.send_get_request(base_url=&quot;127.0.0.1&quot;, paths=&quot;/number&quot;, port=8080, params=params)
+
+print(response.status_code) # This will print the status code of the response like 200, 400, 404, 500, 501 etc.
+print(response.text) # This will print the text from the response.
+print(response.json()) # This will print the json-encoded content of a response, if any
+```
+</code></pre>
+<ol start="2">
+<li><strong>send_post_request(self, base_url: str, paths: str, port: int, data: Dict, header=None, timeout: float = 5.0) -&gt; Response:</strong> This method is used to send the POST request of the HTTP.</li>
+</ol>
+<ul>
+<li><strong>base_url</strong>: User need to provide the base URL to this method for sending the HTTP request. Like <em>localhost</em>, <em>127.0.0.1</em> etc.</li>
+<li><strong>paths</strong>: String, path in url. like: &quot;/number&quot;. &quot;/number/double/&quot;</li>
+<li><strong>port</strong>: Int, Port number for communication</li>
+<li><strong>data</strong>: Dictionary format for the data which need to be send with the POST request.</li>
+<li><strong>header</strong>: Dictionary, Headers which need to add inside request.</li>
+<li><strong>timeout</strong>: Timeout in second's for request, Its an optional argument. Default value is 5.0 seconds.</li>
+</ul>
+<p>This This method handle two exception</p>
+<ol>
+<li>requests.exceptions.Timeout -&gt; For request time out</li>
+<li>Exception -&gt; Generic Exception</li>
+</ol>
+<p>This method return <code>Response</code> Object. User can call various method of this object to get the meaning full information from the response.
+<strong>Example</strong></p>
+<pre><code>```python
+from Framework.HttpHandler import HttpHandler
+
+http_handler = HttpHandler()
+data = {
+    &quot;userName&quot;: &quot;zebra.com&quot;,
+    &quot;password&quot;: &quot;zebra123&quot;
+}
+response = http_handler.send_post_request(base_url=&quot;127.0.0.1&quot;, paths=&quot;/number&quot;, port=8080, data=data)
+
+print(response.status_code) # This will print the status code of the response like 200, 400, 404, 500, 501 etc.
+print(response.text) # This will print the text from the response.
+print(response.json()) # This will print the json-encoded content of a response, if any
+```
+</code></pre>
+<ol start="3">
+<li><strong>send_delete_request(self, base_url: str, paths: str, port: int, headers=None, timeout: float = 5.0) -&gt; Response:</strong>
+This method send the Delete request to provided base url and port number.</li>
+</ol>
+<ul>
+<li><strong>base_url</strong>: User need to provide the base URL to this method for sending the HTTP request. Like <em>localhost</em>, <em>127.0.0.1</em> etc.</li>
+<li><strong>paths</strong>: String, path in url. like: &quot;/number&quot;. &quot;/number/double/&quot;.</li>
+<li><strong>port</strong>: Int, Port number for communication.</li>
+<li><strong>header</strong>: Dictionary, Headers which need to add inside request.</li>
+<li><strong>timeout</strong>: Timeout in second's for request, Its an optional argument. Default value is 5.0 seconds.</li>
+</ul>
+<p>This This method handle two exception</p>
+<ol>
+<li>requests.exceptions.Timeout -&gt; For request time out</li>
+<li>Exception -&gt; Generic Exception</li>
+</ol>
+<p>This method return <code>Response</code> Object. User can call various method of this object to get the meaning full information from the response.
+<strong>Example</strong></p>
+<pre><code>```python
+from Framework.HttpHandler import HttpHandler
+
+http_handler = HttpHandler()
+
+response = http_handler.send_post_request(base_url=&quot;127.0.0.1&quot;, paths=&quot;/number&quot;, port=8080)
+
+print(response.status_code) # This will print the status code of the response like 200, 400, 404, 500, 501 etc.
+print(response.text) # This will print the text from the response.
+print(response.json()) # This will print the json-encoded content of a response, if any
+```
+</code></pre>
+<h3 id="tcphandler">TcpHandler:</h3>
+<p>This class handle the TCP related request. TCP communication is happened on socket communication. So we have use the python Socket libraries to handle the TCP communication.</p>
+<h4 id="methods">Methods</h4>
+<ol>
+<li><strong>__connect_to_tcp_port(self, base_url: str, port: int, timeout=5.0) -&gt; socket:</strong>
+This method is a private method and used to connect with the TCP server. Its take base url and port to connect with the TCP socket. <strong>If connection already establish then it will not got for connection and return object.</strong></li>
+</ol>
+<ul>
+<li><strong>base_url</strong>: User need to provide the base URL to this method for sending the HTTP request. Like <em>localhost</em>, <em>127.0.0.1</em> etc.</li>
+<li><strong>port</strong>: Int, Port number for communication.</li>
+</ul>
+<p>This method handle two exception</p>
+<ul>
+<li>socket.error -&gt; If any error related to socket comes</li>
+<li>Exception -&gt; Generic Exception</li>
+</ul>
+<p>This method <code>socket</code> object and by using this user can call handle various functions.</p>
+<ol start="2">
+<li><strong>send_value_to_tcp(self, base_url: str, port: int, value: bytes, timeout=5.0) -&gt; str:</strong></li>
+</ol>
+<p>This method is send the data to the given TCP port.</p>
+<ul>
+<li><strong>base_url</strong>: User need to provide the base URL to this method for sending the HTTP request. Like <em>localhost</em>, <em>127.0.0.1</em> etc.</li>
+<li><strong>port</strong>: Int, Port number for communication.</li>
+<li><strong>value</strong>: Value which need to be send, It should be in bytes format.<pre class="hljs"><code><div><span class="hljs-comment"># please pass like:</span>
+receive = tcp_handler.send_value_to_tcp(base_url=<span class="hljs-string">"127.0.0.1"</span>, port=<span class="hljs-number">9000</span>, value=<span class="hljs-string">b'0'</span>, timeout=<span class="hljs-number">5.0</span>)
+                    <span class="hljs-comment"># or</span>
+receive = tcp_handler.send_value_to_tcp(base_url=<span class="hljs-string">"127.0.0.1"</span>, port=<span class="hljs-number">9000</span>, value=<span class="hljs-string">"0"</span>.encode(),timeout=<span class="hljs-number">5.0</span>)
+</div></code></pre>
+</li>
+<li><strong>timeout</strong>: timeout for request, Its an Optional argument as default value is <code>5.0</code> seconds.</li>
+</ul>
+<p>This method handle two exception</p>
+<ul>
+<li>socket.error -&gt; If any error related to socket comes</li>
+<li>Exception -&gt; Generic Exception</li>
+</ul>
+<p>This method return <code>Data</code> which is received as response in String format. user can validate the response and perform the operation on it.</p>
+<ol start="3">
+<li><strong>split_receive_value(self, value) -&gt; List:</strong></li>
+</ol>
+<p>This method is used to split the String type value into list of char.
+for eg:
+<code>python     a = &quot;%4.0&amp;&quot;     output: [&quot;%&quot;, &quot;4&quot;, &quot;.&quot;, &quot;0&quot;, &quot;&amp;&quot;]     </code></p>
+<ul>
+<li>value: String value
+This function will return the <code>List of Char</code>. User can validate the value from the list or perform action base on requirement.</li>
+</ul>
+<ol start="4">
+<li><strong>close_socket_connection(self):</strong>
+This method close the socket connection if open.</li>
+</ol>
+<h4 id="example">Example:</h4>
+<pre class="hljs"><code><div><span class="hljs-keyword">from</span> Framework.TcpHandler <span class="hljs-keyword">import</span> TcpHandler
+<span class="hljs-keyword">from</span> Framework.LogHandler <span class="hljs-keyword">import</span> *
+
+<span class="hljs-comment"># create an object of TcpHandler</span>
+tcp_handler = TcpHandler()
+<span class="hljs-comment"># Send an value to the TCP port and capture value in one variable</span>
+receive = tcp_handler.send_value_to_tcp(base_url=<span class="hljs-string">"127.0.0.1"</span>, port=<span class="hljs-number">9000</span>, value=<span class="hljs-string">b'15542'</span>, timeout=<span class="hljs-number">5.0</span>)
+<span class="hljs-comment"># split that value to identify that response should start with % and end with &amp;</span>
+receive = tcp_handler.split_receive_value(receive)
+<span class="hljs-keyword">assert</span> receive[<span class="hljs-number">0</span>] == <span class="hljs-string">"%"</span>, <span class="hljs-string">"% is not in Response"</span>
+<span class="hljs-keyword">assert</span> receive[<span class="hljs-number">-1</span>] == <span class="hljs-string">"&amp;"</span>, <span class="hljs-string">"&amp; is not in Response"</span>
+<span class="hljs-comment"># check if it will return correct value or not.</span>
+<span class="hljs-keyword">assert</span> float(<span class="hljs-string">""</span>.join(receive[<span class="hljs-number">1</span>:<span class="hljs-number">-1</span>])) == pow(<span class="hljs-number">15542</span>, <span class="hljs-number">2</span>), <span class="hljs-string">"Response not contain the power of 15542"</span>
+print_info_log(<span class="hljs-string">f"Response: <span class="hljs-subst">{float(<span class="hljs-string">''</span>.join(receive[<span class="hljs-number">1</span>:<span class="hljs-number">-1</span>]))}</span>"</span>)
+</div></code></pre>
+<h3 id="websockethandler">WebSocketHandler:</h3>
+<p>This class handle the web socket communication. We have used python <code>websocket</code> library to handle the communication. Methods of the class as below:</p>
+<ol>
+<li>__connect_to_ws(self, base_url: str, port: int, timeout=5.0) -&gt; websocket.WebSocket:</li>
+</ol>
+<p>This method is private and used to connect with the WebSocket. <strong>If connection already establish then it will directly return the object.</strong></p>
+<ul>
+<li><strong>base_url</strong>: User need to provide the base URL to this method for sending the HTTP request. Like <em>localhost</em>, <em>127.0.0.1</em> etc.</li>
+<li><strong>port</strong>: Int, Port number for communication.</li>
+<li><strong>timeout</strong>: Timeout for request</li>
+</ul>
+<p>This method return <code>WebSocket Object</code> on which user can communicate.</p>
+<ol start="2">
+<li><strong>send_value_to_ws(self, base_url: str, port: int, value, timeout=5.0):</strong></li>
+</ol>
+<p>This method is used to send and receive the data from WebSocket.</p>
+<ul>
+<li>
+<p><strong>base_url</strong>: User need to provide the base URL to this method for sending the HTTP request. Like <em>localhost</em>, <em>127.0.0.1</em> etc.</p>
+</li>
+<li>
+<p><strong>port</strong>: Int, Port number for communication.</p>
+</li>
+<li>
+<p>timeout: Timeout for request, an Optional argument and default value is <code>5.0</code> seconds</p>
+</li>
+<li>
+<p>Response from the WebSocket</p>
+</li>
+<li>
+<p>close_ws_connection(self):
+&quot;&quot;&quot;
+This method is used to close the WS connection
+:return: None
+&quot;&quot;&quot;</p>
+</li>
+</ul>
+<ol start="3">
+<li><strong>close_ws_connection(self):</strong>
+This method is used to close the WS connection if open.</li>
+</ol>
+<h4 id="example">Example</h4>
+<pre class="hljs"><code><div><span class="hljs-keyword">from</span> Framework.WebSocketHandler <span class="hljs-keyword">import</span> WebSocketHandler
+<span class="hljs-keyword">from</span> Framework.LogHandler <span class="hljs-keyword">import</span> *
+
+<span class="hljs-comment">#create an object of WebSocket</span>
+ws = WebSocketHandler()
+<span class="hljs-comment"># send the value and receive the response into one variable</span>
+response = ws.send_value_to_ws(base_url=<span class="hljs-string">"127.0.0.1"</span>, port=<span class="hljs-number">8090</span>, value=<span class="hljs-number">64</span>, timeout=<span class="hljs-number">5.0</span>)
+<span class="hljs-comment"># validate the response</span>
+<span class="hljs-keyword">assert</span> float(response) == calculate_cube_root(<span class="hljs-number">64</span>), <span class="hljs-string">"Invalidate response, Wrong cube root value send by WebSocket"</span>
+
+</div></code></pre>
+<h1 id="used">Used</h1>
+<p>All these methods are design in such a way that user can reuse the method to handle the multiple scenarios. User can call these methods by passing different arguments and test multiple use cases.
+Lets take one example:</p>
+<p>*User want to send the GET request on 2 different HTTP urls. like one on <code>http://127.0.0.1:8080</code> and second <code>http://192.168.1.3:8080</code>. And send the same data for both.</p>
+<p><strong>Code</strong></p>
+<pre class="hljs"><code><div><span class="hljs-keyword">from</span> Framework.HttpHandler <span class="hljs-keyword">import</span> HttpHandler
+
+http_handler = HttpHandler()
+
+response1 = http_handler.send_get_request(base_url=<span class="hljs-string">"127.0.0.1"</span>, paths=<span class="hljs-string">"/number"</span>, port=<span class="hljs-number">8080</span>, params={<span class="hljs-string">"number"</span>: <span class="hljs-number">64</span>})
+response2 = http_handler.send_get_request(base_url=<span class="hljs-string">"192.168.1.3"</span>, paths=<span class="hljs-string">"/float"</span>, port=<span class="hljs-number">8080</span>, params={<span class="hljs-string">"number"</span>: <span class="hljs-number">64</span>})
+</div></code></pre>
+<p>User can also perform load on the port like:</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">from</span> Framework.HttpHandler <span class="hljs-keyword">import</span> HttpHandler
+
+http_handler = HttpHandler()
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>, <span class="hljs-number">500000</span>):
+    response1 = http_handler.send_get_request(base_url=<span class="hljs-string">"127.0.0.1"</span>, paths=<span class="hljs-string">"/number"</span>, port=<span class="hljs-number">8080</span>, params={<span class="hljs-string">"number"</span>: <span class="hljs-number">64</span>})
+</div></code></pre>
+<ol start="4">
+<li><strong>def calculate_cube_root(self, value):</strong>
+Calculate the cube root and return the value</li>
+</ol>
+<ul>
+<li>value: Value which cube root.
+This method return the cube root of the value</li>
+</ul>
+<h1 id="performance-testing">Performance Testing</h1>
+<h3 id="load-on-http-request">Load on HTTP Request</h3>
+<p>Using this framework user can perform the load on HTTP port. User need to call the below method of the class:</p>
+<ul>
+<li>**def perform_load(self, base_url: str, port: int, paths: str, num_req: int, method: str = &quot;GET&quot;, <strong>kwargs):</strong>
+This method is used to perform the load on HTTP port. User need to pass the num_req which is a number of request</li>
+<li><em>base_url</em>: Base url of the HTTP</li>
+<li><em>port</em>: HTTP port on which user need to send the request</li>
+<li><em>paths</em>: path of the HTTP request</li>
+<li><em>num_req</em>: Number of request which need to be send</li>
+<li><em>method</em>: HTTP methods like GET POST DELETE</li>
+<li><em>kwargs</em>: Other argument pleas check doc of HTTP methods.</li>
+</ul>
+<p>This method return the <strong>True</strong> if all response are proper otherwise <strong>False</strong>.</p>
+<h3 id="load-on-tcp-request">Load on TCP request</h3>
+<p>Using this framework user can perform the load on TCP port. User need to call the below method of the class:</p>
+<ul>
+<li><strong>def perform_load_on_tcp(self, base_url: str, port: int, value: bytes, num_req: int, timeout=5.0):</strong>
+This method is used to perform the load on the WebSocket. It will send number of continuous request
+on the provided url. User need to pass the How much requests need to be send.</li>
+<li><em>base_url</em>: User need to provide the base URL to this method for sending the HTTP request. Like localhost, 127.0.0.1 etc.</li>
+<li><em>port</em>: Int, Port number for communication</li>
+<li><em>value</em>: Value which need to be send.</li>
+<li><em>num_req</em>: Number of request which need to be send</li>
+<li><em>timeout</em>: Time out for one request.</li>
+</ul>
+<p>This methods Return <strong>true</strong> if all the request are fine Otherwise return <strong>false</strong>.</p>
+<h3 id="load-on-websocket">Load on WebSocket</h3>
+<p>Using this framework user can perform the load on WebSocket port. User need to call the below method of the class:</p>
+<ul>
+<li><strong>def perform_load_on_ws(self, base_url: str, port: int, value: bytes, num_req: int, timeout=5.0):</strong></li>
+</ul>
+<p>This method is used to perform the load on the WebSocket. It will send number of continuous request on the provided url. User need to pass the How much requests need to be send.</p>
+<ul>
+<li><em>base_url</em>: User need to provide the base URL to this method for sending the HTTP request. Like localhost, 127.0.0.1 etc.</li>
+<li><em>port</em>: Int, Port number for communication</li>
+<li><em>value</em>: Value which need to be send.</li>
+<li><em>num_req</em>: Number of request which need to be send</li>
+<li><em>timeout</em>: Time out for one request.
+This method return <strong>True</strong> if all the request are fine otherwise <strong>False</strong></li>
+</ul>
+<h1 id="future-scope">Future scope</h1>
+<p>In future we are planing to add the methods which is used to capture feature flag of the microservice. Base on the more request we can add more methods inside the framework.</p>
+
+</body>
+</html>

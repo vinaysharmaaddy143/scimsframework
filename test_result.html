@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Test Report</title>
+    <link href="assets/style.css" rel="stylesheet" type="text/css"/></head>
+  <body onLoad="init()">
+    <script>/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+
+function toArray(iter) {
+    if (iter === null) {
+        return null;
+    }
+    return Array.prototype.slice.call(iter);
+}
+
+function find(selector, elem) { // eslint-disable-line no-redeclare
+    if (!elem) {
+        elem = document;
+    }
+    return elem.querySelector(selector);
+}
+
+function findAll(selector, elem) {
+    if (!elem) {
+        elem = document;
+    }
+    return toArray(elem.querySelectorAll(selector));
+}
+
+function sortColumn(elem) {
+    toggleSortStates(elem);
+    const colIndex = toArray(elem.parentNode.childNodes).indexOf(elem);
+    let key;
+    if (elem.classList.contains('result')) {
+        key = keyResult;
+    } else if (elem.classList.contains('links')) {
+        key = keyLink;
+    } else {
+        key = keyAlpha;
+    }
+    sortTable(elem, key(colIndex));
+}
+
+function showAllExtras() { // eslint-disable-line no-unused-vars
+    findAll('.col-result').forEach(showExtras);
+}
+
+function hideAllExtras() { // eslint-disable-line no-unused-vars
+    findAll('.col-result').forEach(hideExtras);
+}
+
+function showExtras(colresultElem) {
+    const extras = colresultElem.parentNode.nextElementSibling;
+    const expandcollapse = colresultElem.firstElementChild;
+    extras.classList.remove('collapsed');
+    expandcollapse.classList.remove('expander');
+    expandcollapse.classList.add('collapser');
+}
+
+function hideExtras(colresultElem) {
+    const extras = colresultElem.parentNode.nextElementSibling;
+    const expandcollapse = colresultElem.firstElementChild;
+    extras.classList.add('collapsed');
+    expandcollapse.classList.remove('collapser');
+    expandcollapse.classList.add('expander');
+}
+
+function showFilters() {
+    const filterItems = document.getElementsByClassName('filter');
+    for (let i = 0; i < filterItems.length; i++)
+        filterItems[i].hidden = false;
+}
+
+function addCollapse() {
+    // Add links for show/hide all
+    const resulttable = find('table#results-table');
+    const showhideall = document.createElement('p');
+    showhideall.innerHTML = '<a href="javascript:showAllExtras()">Show all details</a> / ' +
+                            '<a href="javascript:hideAllExtras()">Hide all details</a>';
+    resulttable.parentElement.insertBefore(showhideall, resulttable);
+
+    // Add show/hide link to each result
+    findAll('.col-result').forEach(function(elem) {
+        const collapsed = getQueryParameter('collapsed') || 'Passed';
+        const extras = elem.parentNode.nextElementSibling;
+        const expandcollapse = document.createElement('span');
+        if (extras.classList.contains('collapsed')) {
+            expandcollapse.classList.add('expander');
+        } else if (collapsed.includes(elem.innerHTML)) {
+            extras.classList.add('collapsed');
+            expandcollapse.classList.add('expander');
+        } else {
+            expandcollapse.classList.add('collapser');
+        }
+        elem.appendChild(expandcollapse);
+
+        elem.addEventListener('click', function(event) {
+            if (event.currentTarget.parentNode.nextElementSibling.classList.contains('collapsed')) {
+                showExtras(event.currentTarget);
+            } else {
+                hideExtras(event.currentTarget);
+            }
+        });
+    });
+}
+
+function getQueryParameter(name) {
+    const match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+
+function init () { // eslint-disable-line no-unused-vars
+    resetSortHeaders();
+
+    addCollapse();
+
+    showFilters();
+
+    sortColumn(find('.initial-sort'));
+
+    findAll('.sortable').forEach(function(elem) {
+        elem.addEventListener('click',
+            function() {
+                sortColumn(elem);
+            }, false);
+    });
+}
+
+function sortTable(clicked, keyFunc) {
+    const rows = findAll('.results-table-row');
+    const reversed = !clicked.classList.contains('asc');
+    const sortedRows = sort(rows, keyFunc, reversed);
+    /* Whole table is removed here because browsers acts much slower
+     * when appending existing elements.
+     */
+    const thead = document.getElementById('results-table-head');
+    document.getElementById('results-table').remove();
+    const parent = document.createElement('table');
+    parent.id = 'results-table';
+    parent.appendChild(thead);
+    sortedRows.forEach(function(elem) {
+        parent.appendChild(elem);
+    });
+    document.getElementsByTagName('BODY')[0].appendChild(parent);
+}
+
+function sort(items, keyFunc, reversed) {
+    const sortArray = items.map(function(item, i) {
+        return [keyFunc(item), i];
+    });
+
+    sortArray.sort(function(a, b) {
+        const keyA = a[0];
+        const keyB = b[0];
+
+        if (keyA == keyB) return 0;
+
+        if (reversed) {
+            return keyA < keyB ? 1 : -1;
+        } else {
+            return keyA > keyB ? 1 : -1;
+        }
+    });
+
+    return sortArray.map(function(item) {
+        const index = item[1];
+        return items[index];
+    });
+}
+
+function keyAlpha(colIndex) {
+    return function(elem) {
+        return elem.childNodes[1].childNodes[colIndex].firstChild.data.toLowerCase();
+    };
+}
+
+function keyLink(colIndex) {
+    return function(elem) {
+        const dataCell = elem.childNodes[1].childNodes[colIndex].firstChild;
+        return dataCell == null ? '' : dataCell.innerText.toLowerCase();
+    };
+}
+
+function keyResult(colIndex) {
+    return function(elem) {
+        const strings = ['Error', 'Failed', 'Rerun', 'XFailed', 'XPassed',
+            'Skipped', 'Passed'];
+        return strings.indexOf(elem.childNodes[1].childNodes[colIndex].firstChild.data);
+    };
+}
+
+function resetSortHeaders() {
+    findAll('.sort-icon').forEach(function(elem) {
+        elem.parentNode.removeChild(elem);
+    });
+    findAll('.sortable').forEach(function(elem) {
+        const icon = document.createElement('div');
+        icon.className = 'sort-icon';
+        icon.textContent = 'vvv';
+        elem.insertBefore(icon, elem.firstChild);
+        elem.classList.remove('desc', 'active');
+        elem.classList.add('asc', 'inactive');
+    });
+}
+
+function toggleSortStates(elem) {
+    //if active, toggle between asc and desc
+    if (elem.classList.contains('active')) {
+        elem.classList.toggle('asc');
+        elem.classList.toggle('desc');
+    }
+
+    //if inactive, reset all other functions and add ascending active
+    if (elem.classList.contains('inactive')) {
+        resetSortHeaders();
+        elem.classList.remove('inactive');
+        elem.classList.add('active');
+    }
+}
+
+function isAllRowsHidden(value) {
+    return value.hidden == false;
+}
+
+function filterTable(elem) { // eslint-disable-line no-unused-vars
+    const outcomeAtt = 'data-test-result';
+    const outcome = elem.getAttribute(outcomeAtt);
+    const classOutcome = outcome + ' results-table-row';
+    const outcomeRows = document.getElementsByClassName(classOutcome);
+
+    for(let i = 0; i < outcomeRows.length; i++){
+        outcomeRows[i].hidden = !elem.checked;
+    }
+
+    const rows = findAll('.results-table-row').filter(isAllRowsHidden);
+    const allRowsHidden = rows.length == 0 ? true : false;
+    const notFoundMessage = document.getElementById('not-found-message');
+    notFoundMessage.hidden = !allRowsHidden;
+}
+</script>
+    <h1>test_result.html</h1>
+    <p>Report generated on 21-Oct-2021 at 09:57:29 by <a href="https://pypi.python.org/pypi/pytest-html">pytest-html</a> v3.1.1</p>
+    <h2>Environment</h2>
+    <table id="environment">
+      <tr>
+        <td>Packages</td>
+        <td>{"pluggy": "1.0.0", "py": "1.10.0", "pytest": "6.2.5"}</td></tr>
+      <tr>
+        <td>Platform</td>
+        <td>Linux-5.11.0-37-generic-x86_64-with-glibc2.33</td></tr>
+      <tr>
+        <td>Plugins</td>
+        <td>{"html": "3.1.1", "metadata": "1.11.0"}</td></tr>
+      <tr>
+        <td>Python</td>
+        <td>3.9.5</td></tr></table>
+    <h2>Summary</h2>
+    <p>15 tests ran in 5.93 seconds. </p>
+    <p class="filter" hidden="true">(Un)check the boxes to filter the results.</p><input checked="true" class="filter" data-test-result="passed" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="passed">11 passed</span>, <input checked="true" class="filter" data-test-result="skipped" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="skipped">0 skipped</span>, <input checked="true" class="filter" data-test-result="failed" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="failed">4 failed</span>, <input checked="true" class="filter" data-test-result="error" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="error">0 errors</span>, <input checked="true" class="filter" data-test-result="xfailed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xfailed">0 expected failures</span>, <input checked="true" class="filter" data-test-result="xpassed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xpassed">0 unexpected passes</span>
+    <h2>Results</h2>
+    <table id="results-table">
+      <thead id="results-table-head">
+        <tr>
+          <th class="sortable result initial-sort" col="result">Result</th>
+          <th class="sortable" col="name">Test</th>
+          <th class="sortable" col="duration">Duration</th>
+          <th class="sortable links" col="links">Links</th></tr>
+        <tr hidden="true" id="not-found-message">
+          <th colspan="4">No results found. Try to check the filters</th></tr></thead>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">TestCases/test_HttpHandler.py::test_pass_int_value</td>
+          <td class="col-duration">0.01</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_pass_int_value():<br/>        params = {<br/>            &quot;number&quot;: 2<br/>        }<br/>        response = send_get_request_with_params(params=params)<br/>        assert response.status_code == 200<br/>&gt;       assert isclose(float(response.text), 0.0)<br/><span class="error">E       AssertionError: assert False</span><br/><span class="error">E        +  where False = isclose(1.4142135623730951, 0.0)</span><br/><span class="error">E        +    where 1.4142135623730951 = float(&#x27;1.4142135623730951&#x27;)</span><br/><span class="error">E        +      where &#x27;1.4142135623730951&#x27; = &lt;Response [200]&gt;.text</span><br/><br/>TestCases/test_HttpHandler.py:29: AssertionError<br/> ------------------------------Captured stdout call------------------------------ <br/>Sending request to: http://127.0.0.1:8080/number, params: {&#x27;number&#x27;: 2}
+Starting new HTTP connection (1): 127.0.0.1:8080
+http://127.0.0.1:8080 &quot;GET /number?number=2 HTTP/1.1&quot; 200 18
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    root:LogHandler.py:33 Sending request to: http://127.0.0.1:8080/number, params: {&#x27;number&#x27;: 2}
+DEBUG    urllib3.connectionpool:connectionpool.py:227 Starting new HTTP connection (1): 127.0.0.1:8080
+DEBUG    urllib3.connectionpool:connectionpool.py:452 http://127.0.0.1:8080 &quot;GET /number?number=2 HTTP/1.1&quot; 200 18<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">TestCases/test_HttpHandler.py::test_pass_string_value</td>
+          <td class="col-duration">0.01</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_pass_string_value():<br/>        params = {<br/>            &quot;number&quot;: &#x27;2&#x27;<br/>        }<br/>        response = send_get_request_with_params(params=params)<br/>        assert response.status_code == 200<br/>&gt;       assert &quot;0.0&quot; in response.text<br/><span class="error">E       AssertionError: assert &#x27;0.0&#x27; in &#x27;1.4142135623730951&#x27;</span><br/><span class="error">E        +  where &#x27;1.4142135623730951&#x27; = &lt;Response [200]&gt;.text</span><br/><br/>TestCases/test_HttpHandler.py:38: AssertionError<br/> ------------------------------Captured stdout call------------------------------ <br/>Sending request to: http://127.0.0.1:8080/number, params: {&#x27;number&#x27;: &#x27;2&#x27;}
+Starting new HTTP connection (1): 127.0.0.1:8080
+http://127.0.0.1:8080 &quot;GET /number?number=2 HTTP/1.1&quot; 200 18
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    root:LogHandler.py:33 Sending request to: http://127.0.0.1:8080/number, params: {&#x27;number&#x27;: &#x27;2&#x27;}
+DEBUG    urllib3.connectionpool:connectionpool.py:227 Starting new HTTP connection (1): 127.0.0.1:8080
+DEBUG    urllib3.connectionpool:connectionpool.py:452 http://127.0.0.1:8080 &quot;GET /number?number=2 HTTP/1.1&quot; 200 18<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">TestCases/test_TcpHandler.py::test_send_double_number</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_send_double_number():<br/>        receive = tcp_handler.send_value_to_tcp(base_url=&quot;127.0.0.1&quot;, port=9000, value=b&#x27;2.2&#x27;, timeout=5.0)<br/>        receive = tcp_handler.split_receive_value(receive)<br/>        assert receive[0] == &quot;%&quot;, &quot;% is not in Response&quot;<br/>        assert receive[-1] == &quot;&amp;&quot;, &quot;&amp; is not in Response&quot;<br/>&gt;       assert float(&quot;&quot;.join(receive[1:-1])) != pow(2.2, 2), &quot;Invalid Response, Microservice only take number not double&quot;<br/><span class="error">E       AssertionError: Invalid Response, Microservice only take number not double</span><br/><span class="error">E       assert 4.840000000000001 != 4.840000000000001</span><br/><span class="error">E        +  where 4.840000000000001 = float(&#x27;4.840000000000001&#x27;)</span><br/><span class="error">E        +    where &#x27;4.840000000000001&#x27; = &lt;built-in method join of str object at 0x7fde1a580670&gt;([&#x27;4&#x27;, &#x27;.&#x27;, &#x27;8&#x27;, &#x27;4&#x27;, &#x27;0&#x27;, &#x27;0&#x27;, ...])</span><br/><span class="error">E        +      where &lt;built-in method join of str object at 0x7fde1a580670&gt; = &#x27;&#x27;.join</span><br/><span class="error">E        +  and   4.840000000000001 = pow(2.2, 2)</span><br/><br/>TestCases/test_TcpHandler.py:32: AssertionError<br/> ------------------------------Captured stdout call------------------------------ <br/>Sending TCU request to url: 127.0.0.1:9000
+Object already there
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    root:LogHandler.py:33 Sending TCU request to url: 127.0.0.1:9000
+DEBUG    root:LogHandler.py:33 Object already there<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">TestCases/test_TcpHandler.py::test_send_string_value</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_send_string_value():<br/>        receive = tcp_handler.send_value_to_tcp(base_url=&quot;127.0.0.1&quot;, port=9000, value=&quot;10&quot;.encode(), timeout=5.0)<br/>        receive = tcp_handler.split_receive_value(receive)<br/>        assert receive[0] == &quot;%&quot;, &quot;% is not in Response&quot;<br/>        assert receive[-1] == &quot;&amp;&quot;, &quot;&amp; is not in Response&quot;<br/>&gt;       assert float(&#x27;&#x27;.join(receive[1:-1])) != pow(10, 2), &quot;Invalid Response,&quot; \<br/>                                                            &quot; Microservice only take number not string value&quot;<br/><span class="error">E       AssertionError: Invalid Response, Microservice only take number not string value</span><br/><span class="error">E       assert 100.0 != 100</span><br/><span class="error">E        +  where 100.0 = float(&#x27;100.0&#x27;)</span><br/><span class="error">E        +    where &#x27;100.0&#x27; = &lt;built-in method join of str object at 0x7fde1a580670&gt;([&#x27;1&#x27;, &#x27;0&#x27;, &#x27;0&#x27;, &#x27;.&#x27;, &#x27;0&#x27;])</span><br/><span class="error">E        +      where &lt;built-in method join of str object at 0x7fde1a580670&gt; = &#x27;&#x27;.join</span><br/><span class="error">E        +  and   100 = pow(10, 2)</span><br/><br/>TestCases/test_TcpHandler.py:41: AssertionError<br/> ------------------------------Captured stdout call------------------------------ <br/>Sending TCU request to url: 127.0.0.1:9000
+Object already there
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    root:LogHandler.py:33 Sending TCU request to url: 127.0.0.1:9000
+DEBUG    root:LogHandler.py:33 Object already there<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">TestCases/test_HttpHandler.py::test_valid_double_number</td>
+          <td class="col-duration">0.01</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Sending request to: http://127.0.0.1:8080/number, params: {&#x27;number&#x27;: 2.2}
+Starting new HTTP connection (1): 127.0.0.1:8080
+http://127.0.0.1:8080 &quot;GET /number?number=2.2 HTTP/1.1&quot; 200 18
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    root:LogHandler.py:33 Sending request to: http://127.0.0.1:8080/number, params: {&#x27;number&#x27;: 2.2}
+DEBUG    urllib3.connectionpool:connectionpool.py:227 Starting new HTTP connection (1): 127.0.0.1:8080
+DEBUG    urllib3.connectionpool:connectionpool.py:452 http://127.0.0.1:8080 &quot;GET /number?number=2.2 HTTP/1.1&quot; 200 18<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">TestCases/test_HttpHandler.py::test_zero_value</td>
+          <td class="col-duration">0.02</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Sending request to: http://127.0.0.1:8080/number, params: {&#x27;number&#x27;: 0.0}
+Starting new HTTP connection (1): 127.0.0.1:8080
+http://127.0.0.1:8080 &quot;GET /number?number=0.0 HTTP/1.1&quot; 200 3
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    root:LogHandler.py:33 Sending request to: http://127.0.0.1:8080/number, params: {&#x27;number&#x27;: 0.0}
+DEBUG    urllib3.connectionpool:connectionpool.py:227 Starting new HTTP connection (1): 127.0.0.1:8080
+DEBUG    urllib3.connectionpool:connectionpool.py:452 http://127.0.0.1:8080 &quot;GET /number?number=0.0 HTTP/1.1&quot; 200 3<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">TestCases/test_HttpHandler.py::test_pass_negative_value</td>
+          <td class="col-duration">0.01</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Sending request to: http://127.0.0.1:8080/number, params: {&#x27;number&#x27;: -1}
+Starting new HTTP connection (1): 127.0.0.1:8080
+http://127.0.0.1:8080 &quot;GET /number?number=-1 HTTP/1.1&quot; 200 3
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    root:LogHandler.py:33 Sending request to: http://127.0.0.1:8080/number, params: {&#x27;number&#x27;: -1}
+DEBUG    urllib3.connectionpool:connectionpool.py:227 Starting new HTTP connection (1): 127.0.0.1:8080
+DEBUG    urllib3.connectionpool:connectionpool.py:452 http://127.0.0.1:8080 &quot;GET /number?number=-1 HTTP/1.1&quot; 200 3<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">TestCases/test_TcpHandler.py::test_send_valid_number</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Sending TCU request to url: 127.0.0.1:9000
+Object  not there
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    root:LogHandler.py:33 Sending TCU request to url: 127.0.0.1:9000
+DEBUG    root:LogHandler.py:33 Object  not there<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">TestCases/test_TcpHandler.py::test_send_valid_large_number</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Sending TCU request to url: 127.0.0.1:9000
+Object already there
+Response: 241553764.0
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    root:LogHandler.py:33 Sending TCU request to url: 127.0.0.1:9000
+DEBUG    root:LogHandler.py:33 Object already there
+INFO     root:LogHandler.py:60 Response: 241553764.0<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">TestCases/test_TcpHandler.py::test_send_negative_value</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Sending TCU request to url: 127.0.0.1:9000
+Object already there
+Response: 324.0
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    root:LogHandler.py:33 Sending TCU request to url: 127.0.0.1:9000
+DEBUG    root:LogHandler.py:33 Object already there
+INFO     root:LogHandler.py:60 Response: 324.0<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">TestCases/test_TcpHandler.py::test_send_zero_value</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Sending TCU request to url: 127.0.0.1:9000
+Object already there
+Response: 0.0
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    root:LogHandler.py:33 Sending TCU request to url: 127.0.0.1:9000
+DEBUG    root:LogHandler.py:33 Object already there
+INFO     root:LogHandler.py:60 Response: 0.0<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">TestCases/test_TcpHandler.py::test_invalidate_response</td>
+          <td class="col-duration">5.02</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Sending TCU request to url: 127.0.0.1:9000
+Object already there
+Error to send the b&#x27;&#x27; to tcp port, EXCEPTION: timed out
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    root:LogHandler.py:33 Sending TCU request to url: 127.0.0.1:9000
+DEBUG    root:LogHandler.py:33 Object already there
+ERROR    root:LogHandler.py:42 Error to send the b&#x27;&#x27; to tcp port, EXCEPTION: timed out<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">TestCases/test_WebSocketHandler.py::test_send_valid_number</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">TestCases/test_WebSocketHandler.py::test_send_large_number</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">TestCases/test_WebSocketHandler.py::test_send_negative_number</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody></table></body></html>
